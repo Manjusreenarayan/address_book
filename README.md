@@ -20,6 +20,10 @@ uvicorn src.main:app --reload
 
 The FastAPI server will start running at `http://127.0.0.1:8000`.
 
+## API Documentation
+
+The Swagger documentation for the API can be accessed at `http://127.0.0.1:8000/docs`.
+
 ## API Endpoints
 
 The following API endpoints are available:
@@ -31,10 +35,6 @@ The following API endpoints are available:
 - `PUT /addressbook/{entry_id}`: Update an existing address entry.
 - `DELETE /addressbook/{entry_id}`: Delete an address entry.
 - `GET /find_nearest_locations/`: Retrieves addresses within a specified distance from provided location coordinates.
-
-## API Documentation
-
-The Swagger documentation for the API can be accessed at `http://127.0.0.1:8000/docs`.
 
 ## Validation
 
