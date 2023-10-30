@@ -46,6 +46,9 @@ The application allows users to retrieve addresses that are within a specified d
 
 - `GET /find_nearest_locations/`: Retrieve addresses within a given distance and location coordinates.
 
+## Logging
+Once you start the Fast API Server on your local Machine and start using the API's , you can find the logs stored on the app.log file under the logs Directory of this project
+
 ## Author
 
 Manjusree Narayan
