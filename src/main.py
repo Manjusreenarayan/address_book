@@ -32,6 +32,19 @@ logger = logging.getLogger(__name__)
 # Get the absolute path to the current directory
 current_directory = os.path.abspath(os.path.dirname(__file__))
 
+parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
+
+# Construct the absolute path to the logs folder
+logs_folder_path = os.path.join(parent_directory, "logs")
+
+# Check if the logs folder exists, if not, create it
+if not os.path.exists(logs_folder_path):
+    try:
+        os.makedirs(logs_folder_path)
+        print(f"Logs folder created at {logs_folder_path}")
+    except OSError as e:
+        print(f"Error occurred while creating logs folder: {e}")
+
 # Construct the absolute path to logs_conf.yaml
 config_path = os.path.join(current_directory, "log_conf.yaml")
 
