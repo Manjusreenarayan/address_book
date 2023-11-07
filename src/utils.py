@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from . import models
-from .schema import AddressBookEntry
+import models
+from schema import AddressBookEntry
 import math
 
 # Function to calculate the haversine distance between two points
