@@ -1,10 +1,10 @@
 # Import necessary libraries and modules
 from fastapi import FastAPI, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
-from database import Database
-from utils import create_addressbook_entry,create_addressbook_entry,get_all_addressbook_entries,get_addressbook_entry,update_addressbook_entry,delete_addressbook_entry,get_all_addressbook_entries,haversine
-from config import Config
-from schema import AddressBookEntry, AddressBookEntryCreate, AddressBookEntryUpdate, AddressBookDeletion
+from src.database import Database
+from src.utils import utils_create_addressbook_entry,utils_get_all_addressbook_entries,utils_get_addressbook_entry,utils_update_addressbook_entry,utils_delete_addressbook_entry,utils_haversine
+from src.config import Config
+from src.schema import AddressBookEntry, AddressBookEntryCreate, AddressBookEntryUpdate, AddressBookDeletion
 import logging, logging.config
 from fastapi import FastAPI
 import os
@@ -19,11 +19,11 @@ connection, SessionLocal, addressbook = Database(Config.DATABASE_URL)
 
 # Initialize FastAPI app
 app = FastAPI()
-origins = ["*"]
 
+# Allow all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -70,7 +70,7 @@ with open(config_path, 'r') as f:
 @app.post("/addressbook/")
 def create_addressbook_entry(entry: AddressBookEntryCreate, db: Session = Depends(get_db)):
     logger.info("Creating address book entry")
-    db_entry = create_addressbook_entry(db, entry)
+    db_entry = utils_create_addressbook_entry(db, entry)
     return db_entry
 
 @app.post("/addressbookrandom/")
@@ -94,7 +94,7 @@ def create_random_addresses(count: int = Query(..., title="Number of Addresses")
             lng=fake.longitude()
         )
         random_addresses.append(address_entity)
-    result = [create_addressbook_entry(db, random_address ) for random_address in random_addresses]
+    result = [utils_create_addressbook_entry(db, random_address ) for random_address in random_addresses]
     return {"status":f"{count} number of random addresses created in addressbook"}
 
 
@@ -103,7 +103,7 @@ def create_random_addresses(count: int = Query(..., title="Number of Addresses")
 def get_addressbook_entries(db: Session = Depends(get_db)):
     try:
         logger.info("Retrieving all address book entries")
-        entry = get_all_addressbook_entries(db)
+        entry = utils_get_all_addressbook_entries(db)
         if entry is None or entry == []:
             return {"error": "No Data found"}
         return {"address_book_list": entry}
@@ -115,7 +115,7 @@ def get_addressbook_entries(db: Session = Depends(get_db)):
 @app.get("/addressbook/{entry_id}", response_model=AddressBookEntry)
 def get_addressbook_entry(entry_id: str, db: Session = Depends(get_db)):
     logger.info(f"Retrieving address book entry with id: {entry_id}")
-    entry = get_addressbook_entry(db, entry_id)
+    entry = utils_get_addressbook_entry(db, entry_id)
     if entry is None:
         raise HTTPException(status_code=404, detail="Entry not found")
     return entry
@@ -124,7 +124,7 @@ def get_addressbook_entry(entry_id: str, db: Session = Depends(get_db)):
 @app.put("/addressbook/{entry_id}")
 def update_addressbook_entry(entry_id: str, entry: AddressBookEntryUpdate, db: Session = Depends(get_db)):
     logger.info(f"Updating address book entry with id: {entry_id}")
-    db_entry = update_addressbook_entry(db, entry_id, entry)
+    db_entry = utils_update_addressbook_entry(db, entry_id, entry)
     if db_entry is None:
         raise HTTPException(status_code=404, detail="Entry not found")
     return db_entry
@@ -133,7 +133,7 @@ def update_addressbook_entry(entry_id: str, entry: AddressBookEntryUpdate, db: S
 @app.delete("/addressbook/{entry_id}", response_model=AddressBookDeletion)
 def delete_addressbook_entry(entry_id: str, db: Session = Depends(get_db)):
     logger.info(f"Deleting address book entry with id: {entry_id}")
-    db_entry = delete_addressbook_entry(db, entry_id)
+    db_entry = utils_delete_addressbook_entry(db, entry_id)
     if db_entry is None:
         raise HTTPException(status_code=404, detail="Entry not found")
     return db_entry
@@ -148,11 +148,11 @@ async def find_nearest_locations(
 ):
     logger.info("Finding nearest locations")
     # Calculate distances and query the database for nearest locations
-    locations = get_all_addressbook_entries(db)
+    locations = utils_get_all_addressbook_entries(db)
     locations_within_distance = []
 
     for location in locations:
-        dist = haversine(target_latitude, target_longitude, location.lat, location.lng)
+        dist = utils_haversine(target_latitude, target_longitude, location.lat, location.lng)
         if dist <= distance:
             locations_within_distance.append({"nearest_locations": location, "distance": dist})
 

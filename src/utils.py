@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-import models
-from schema import AddressBookEntry
+import src.models as models
+from src.schema import AddressBookEntry
 import math
 
 # Function to calculate the haversine distance between two points
-def haversine(lat1, lon1, lat2, lon2):
+def utils_haversine(lat1, lon1, lat2, lon2):
     # Radius of the Earth in kilometers
     earth_radius = 6371.0
 
@@ -24,7 +24,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return distance
 
 # Function to create an address book entry
-def create_addressbook_entry(db: Session, entry: AddressBookEntry):
+def utils_create_addressbook_entry(db: Session, entry: AddressBookEntry):
     try:
         entry_dict = entry.dict()
 
@@ -38,7 +38,7 @@ def create_addressbook_entry(db: Session, entry: AddressBookEntry):
         raise e
 
 # Function to get all address book entries
-def get_all_addressbook_entries(db: Session):
+def utils_get_all_addressbook_entries(db: Session):
     try:
         return db.query(models.AddressBook).all()
     except Exception as e:
@@ -46,7 +46,7 @@ def get_all_addressbook_entries(db: Session):
         raise e
 
 # Function to get an address book entry by ID
-def get_addressbook_entry(db: Session, entry_id: str):
+def utils_get_addressbook_entry(db: Session, entry_id: str):
     try:
         return db.query(models.AddressBook).filter(models.AddressBook.id == entry_id).first()
     except Exception as e:
@@ -54,7 +54,7 @@ def get_addressbook_entry(db: Session, entry_id: str):
         raise e
 
 # Function to update an address book entry
-def update_addressbook_entry(db: Session, entry_id: str, entry: AddressBookEntry):
+def utils_update_addressbook_entry(db: Session, entry_id: str, entry: AddressBookEntry):
     try:
         db_entry = db.query(models.AddressBook).filter(models.AddressBook.id == entry_id).first()
         if db_entry is None:
@@ -71,7 +71,7 @@ def update_addressbook_entry(db: Session, entry_id: str, entry: AddressBookEntry
         raise e
 
 # Function to delete an address book entry
-def delete_addressbook_entry(db: Session, entry_id: str):
+def utils_delete_addressbook_entry(db: Session, entry_id: str):
     try:
         db_entry = db.query(models.AddressBook).filter(models.AddressBook.id == entry_id).first()
         if db_entry:
